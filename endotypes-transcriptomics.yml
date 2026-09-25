@@ -1,0 +1,50 @@
+# Environment for endotypes-transcriptomics.
+#
+#   mamba env create -f endotypes-transcriptomics.yml    (or conda / micromamba)
+#   mamba activate endotypes-transcriptomics
+#   Rscript -e 'IRkernel::installspec()'                  # register the R kernel
+#   python -m bash_kernel.install                         # register the Bash kernel
+#   jupyter lab
+#
+# The same file builds the environment on a laptop (osx-arm64, osx-64) and on the
+# Lifebit JupyterLab image (linux-64).
+#
+# All analysis is R. JupyterLab, nbconvert and bash_kernel are Python packages,
+# so conda pulls a Python interpreter in as their dependency. Python is the
+# notebook host, not a language this project writes code in.
+name: endotypes-transcriptomics
+channels:
+  - conda-forge
+  - bioconda
+dependencies:
+  # ── notebook host and kernels ───────────────────────────────────────────
+  - jupyterlab
+  - nbconvert                  # run_all.sh, the machine path
+  - jupyter_core               # provides the `jupyter` command used by run_all.sh
+  - r-irkernel                 # R kernel
+  - bash_kernel                # Bash kernel
+
+  # ── R ───────────────────────────────────────────────────────────────────
+  - r-base=4.4.*
+
+  # 00, 22, 24  download from GEO (Gene Expression Omnibus)
+  - bioconductor-geoquery
+  - r-data.table
+  - r-curl
+
+  # 06  batch correction: sva is the oracle that federated ComBat is checked against
+  - bioconductor-sva
+  - bioconductor-limma                    # removeBatchEffect, duplicateCorrelation
+
+  # 23, 25  counts to log2 counts per million (TMM, voom); DESeq2 for later
+  - bioconductor-edger
+  - bioconductor-deseq2
+
+  # 12-21  clustering and figures
+  - r-cluster
+  - bioconductor-complexheatmap
+  - r-circlize
+  - r-jsonlite
+
+  # 25  single-cell count matrices (Matrix Market files) for pseudobulk
+  - r-matrix
