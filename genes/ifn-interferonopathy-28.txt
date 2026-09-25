@@ -1,0 +1,6 @@
+# 28-gene interferonopathy panel -- TO BE FILLED IN.
+#
+# Add the 28 HGNC gene symbols of the panel used by the Goldbach-Mansky group,
+# one per line, copied from the primary source, not from memory. Step 03 scores
+# this panel alongside the six-gene score when the file holds any symbols, and
+# skips it with a message while the file is empty.
