@@ -1,17 +1,13 @@
 # endotypes-transcriptomics
 
-**Patient endotypes from blood gene expression in pediatric systemic lupus erythematosus (SLE):
-federated from the moment data sit at separate sites, one step per notebook, on a microarray study
-and two RNA sequencing studies.**
+**Patient endotype discovery from blood gene expression in pediatric systemic lupus erythematosus (SLE)**:
+demonstrating federation from separate sites. We have a microarray study
+and two RNA sequencing studies.
 
-An **endotype** is a group of patients who share a pattern of gene expression. We look for such groups
-without telling the method anything about disease activity, nephritis or interferon, and then ask
-what the groups mean.
+An **endotype** is a group of patients who share a pattern of gene expression. 
 
-This repository follows the layout of
-[endotypes-proteomics](https://github.com/NIH-NLM/endotypes-proteomics).
 
-## Three studies, two platforms
+## Three studies, three different types of datasets.
 
 | study | data type | tissue | patients | reference |
 |---|---|---|---|---|
@@ -19,26 +15,18 @@ This repository follows the layout of
 | **GSE232381** | `bulk_RNA_seq`: NovaSeq | peripheral blood cells | 16 with lupus nephritis (10 active, 6 inactive); no age in GEO | Chen YC et al. *Heliyon* 2024;10:e32303 |
 | **GSE135779** | `scRNA_seq`, used as pseudobulk | PBMC | 33 children with SLE, 11 healthy children | Nehar-Belaid D et al. *Nat Immunol* 2020;21:1094–1106 |
 
-Every notebook's name says which data type it works on.
+## Analysis
 
-## The two rules
+These are three different platforms.  The RNA_array is the largest, it is an open question how best to leverage these in a federated manner -- all data in this analysis is public.
 
-**1. From step 04 on, no data leave a site.** GSE65391 is split into three simulated sites, A, B and C,
-standing in for three institutions. After that, a site sends only summaries:
 - per-gene counts, sums and sums of squares;
 - model parameters;
 - per-cluster counts and sums;
 - histograms and contingency tables.
 
-Every message goes through `send()` (`src/federation.R`), and step 17 audits the whole record. Because
-the sites are simulated, some notebooks also compute the same quantity on all samples in one place,
-in cells headed **"Oracle — possible only because this is a simulation"**. Those cells only prove
-exactness or measure accuracy. Nothing an oracle computes feeds a later step.
-
-**2. Platforms are never merged at the value level.** Array intensities and sequencing counts differ in
-scale, noise and dynamic range. Each study is normalised by its own platform's method:
+Array intensities and sequencing counts differ in scale, noise and dynamic range. Each study is normalized by its own platform's method:
 - array log2 intensities go to limma;
-- counts go through TMM and voom to log2 counts per million.
+- RNASeq counts go through TMM and voom to log2 counts per million.
 
 The studies meet in three ways only:
 - **shared gene symbols**, keyed through NCBI Entrez identifiers;
@@ -91,20 +79,6 @@ KERNEL=ir-endotypes-transcriptomics ./run_all.sh --cross-platform
 Every download happens inside the notebooks and only once (about 170 MB for GSE65391, 1.3 GB for
 GSE135779).
 
-## Repository layout
-
-```
-cohorts/     COMMITTED  frozen site assignment and discovery/validation split
-genes/       COMMITTED  interferon gene sets (six-gene score; 28-gene panel to fill in)
-figures/     COMMITTED  every figure, named figNN_<data type>_<what>.png
-ipynb/       COMMITTED  the notebooks, and nothing else
-src/         COMMITTED  paths.R, endotypes.R, federation.R, platforms.R, figures.R
-reference/   COMMITTED  the earlier Nextflow scaffold, the source of the analysis logic
-data/        ignored    one folder per GEO series, data/ncbi/ (gene_info), data/run_artifacts/
-```
-
-`src/paths.R` is the only place locations are written down. `data/run_artifacts/` can be deleted at
-any time; `./run_all.sh` rebuilds it, and the frozen `cohorts/` files keep every draw the same.
 
 ## Notebooks
 
@@ -207,11 +181,3 @@ signature, and it is shown on patients who played no part in finding it.
   GSE232381 (p = 1.0).
 - **The interferon score** separates SLE from healthy children in GSE135779 (p = 2e-5) but does not
   track nephritis activity in GSE232381.
-
-## Next
-
-1. Fill `genes/ifn-interferonopathy-28.txt` from the primary source; steps 10 and 28 then score it.
-2. Differential expression between endotypes on validation patients: limma with
-   `duplicateCorrelation` for the array; DESeq2 and limma-voom for counts
-   (`reference/bin/run_limma.R`, `run_deseq2.R`). Federated as per-site model coefficients.
-3. Prediction of disease stage from the endotype at a visit and the change since the previous visit.
