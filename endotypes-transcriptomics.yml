@@ -19,32 +19,43 @@ channels:
 dependencies:
   # ── notebook host and kernels ───────────────────────────────────────────
   - jupyterlab
-  - nbconvert                  # run_all.sh, the machine path
-  - jupyter_core               # provides the `jupyter` command used by run_all.sh
+  - nbconvert                  # used by run_all.sh to execute the notebooks
+  - jupyter_core               # provides the `jupyter` command
   - r-irkernel                 # R kernel
   - bash_kernel                # Bash kernel
 
   # ── R ───────────────────────────────────────────────────────────────────
   - r-base=4.4.*
 
-  # 00, 22, 24  download from GEO (Gene Expression Omnibus)
+  # download from GEO (Gene Expression Omnibus)
   - bioconductor-geoquery
   - r-data.table
   - r-curl
 
-  # 06  batch correction: sva is the oracle that federated ComBat is checked against
-  - bioconductor-sva
   - bioconductor-limma                    # removeBatchEffect, duplicateCorrelation
 
-  # 23, 25  counts to log2 counts per million (TMM, voom); DESeq2 for later
+  # differential expression (later)
   - bioconductor-edger
   - bioconductor-deseq2
 
-  # 12-21  clustering and figures
+  # WGCNA dependencies. WGCNA itself has no osx-arm64 conda build, so the
+  # WGCNA notebooks install it from CRAN in a visible first cell.
+  - r-dynamictreecut
+  - r-fastcluster
+  - bioconductor-impute
+  - bioconductor-preprocesscore
+
+  # GSE135779 supplementary table (xlsx)
+  - r-readxl
+
+  # federation: random-effects meta-analysis
+  - r-metafor
+
+  # clustering and figures
   - r-cluster
   - bioconductor-complexheatmap
   - r-circlize
   - r-jsonlite
 
-  # 25  single-cell count matrices (Matrix Market files) for pseudobulk
+  # single-cell count matrices (Matrix Market files) for pseudobulk
   - r-matrix
