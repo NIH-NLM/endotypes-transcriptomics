@@ -1,47 +1,56 @@
 #!/usr/bin/env bash
-# The machine path. The same notebooks are the human path in JupyterLab.
+# Run the notebooks in order. Every analysis step is in a notebook; this script only executes them.
 #
-#   ./run_all.sh                    steps 00-21: GSE65391 (RNA_array), federated
-#   ./run_all.sh --cross-platform   also 22-31: GSE232381 (bulk_RNA_seq) and
-#                                   GSE135779 (scRNA_seq), a 1.2 GB download
+#   ./run_all.sh                      all three studies, then federation
+#   ./run_all.sh GSE65391             one study (GSE65391, GSE232381 or GSE135779)
+#   ./run_all.sh federation           the federation notebooks only
 #   KERNEL=ir-endotypes-transcriptomics ./run_all.sh
-#                                   use a named R kernel instead of "ir"
+#                                     use a named R kernel instead of "ir"
 #
-# Notebooks execute in place, so each committed notebook carries its own output.
-# Every step reads cohorts/ (committed) and data/, and writes data/run_artifacts/
-# (gitignored, regenerable) and figures/ (committed).
+# Notebooks execute in place, so each saved notebook carries its own output.
+# GSE232381 and GSE135779 read the GSE65391 module gene lists, so run GSE65391 first.
+# GSE135779 needs data/GSE135779/41590_2020_743_MOESM3_ESM.xlsx, downloaded by hand (see README);
+# notebook 20 stops if it is missing.
 set -euo pipefail
 cd "$(dirname "$0")/ipynb"
 
 KERNEL="${KERNEL:-ir}"
-STEPS=(00_RNA_array_download_GSE65391 01_RNA_array_metadata_and_stage
-       02_RNA_array_probes_to_genes 03_RNA_array_study_batch_check
-       04_RNA_array_assign_sites 05_RNA_array_plant_site_effects
-       06_RNA_array_federated_combat 07_RNA_array_federated_location_scale
-       08_RNA_array_compare_corrections 09_RNA_array_split_patients
-       10_RNA_array_interferon_score 11_RNA_array_federated_genes_and_pcs
-       12_RNA_array_federated_consensus 13_RNA_array_assign_endotypes
-       14_RNA_array_heatmap_consensus 15_RNA_array_heatmap_genes_by_samples
-       16_RNA_array_heatmap_visit_stability 17_RNA_array_federation_audit
-       18_RNA_array_clustering_alone 19_RNA_array_shared_gene_list
-       20_RNA_array_federation_benefit 21_RNA_array_heatmap_alone_vs_federated)
-if [[ "${1:-}" == "--cross-platform" ]]; then
-  STEPS+=(22_bulk_RNA_seq_download_GSE232381 23_bulk_RNA_seq_prepare_GSE232381
-          24_scRNA_seq_download_GSE135779 25_scRNA_seq_pseudobulk_GSE135779
-          26_cross_platform_shared_genes 27_cross_platform_signature_preservation
-          28_cross_platform_interferon_score 29_cross_platform_transfer_endotypes
-          30_cross_platform_federated_discovery 31_cross_platform_heatmaps)
+case "${1:-all}" in
+  GSE65391)   PATTERNS=("0[0-9]_GSE65391_*") ;;
+  GSE232381)  PATTERNS=("1[0-9]_GSE232381_*") ;;
+  GSE135779)  PATTERNS=("2[0-9]_GSE135779_*") ;;
+  federation) PATTERNS=("3[0-9]_federation_*") ;;
+  all)        PATTERNS=("0[0-9]_GSE65391_*" "1[0-9]_GSE232381_*" "2[0-9]_GSE135779_*" "3[0-9]_federation_*") ;;
+  *) echo "unknown target: $1 (use GSE65391, GSE232381, GSE135779, federation or all)"; exit 1 ;;
+esac
+
+# The kernel must run the R of the active conda environment. A kernel called "ir" registered by
+# another project runs that project's R and package versions, which change the results.
+KERNEL_R=$(jupyter kernelspec list --json | python -c "import json,sys; print(json.load(sys.stdin)['kernelspecs']['$KERNEL']['spec']['argv'][0])" 2>/dev/null || true)
+if [[ -z "$KERNEL_R" ]]; then
+  echo "kernel '$KERNEL' not found; see: jupyter kernelspec list"; exit 1
+fi
+if [[ -z "${CONDA_PREFIX:-}" || "$KERNEL_R" != "$CONDA_PREFIX"/* ]]; then
+  echo "kernel '$KERNEL' runs $KERNEL_R"
+  echo "but the active environment is ${CONDA_PREFIX:-<none>}"
+  echo "activate endotypes-transcriptomics and use its kernel, for example:"
+  echo "  KERNEL=ir-endotypes-transcriptomics ./run_all.sh"
+  exit 1
 fi
 
-for nb in "${STEPS[@]}"; do
-  printf '%-44s ' "$nb"
-  start=$SECONDS
-  if jupyter nbconvert --to notebook --execute --inplace \
-       --ExecutePreprocessor.kernel_name="$KERNEL" \
-       --ExecutePreprocessor.timeout=7200 "$nb.ipynb" >/dev/null 2>"/tmp/$nb.err"; then
-    echo "OK  ($((SECONDS - start)) s)"
-  else
-    echo "FAILED"; tail -20 "/tmp/$nb.err"; exit 1
-  fi
+for pattern in "${PATTERNS[@]}"; do
+  for nb in $(ls $pattern.ipynb | sort); do
+    printf '%-58s ' "$nb"
+    start=$SECONDS
+    if jupyter nbconvert --to notebook --execute --inplace \
+         --ExecutePreprocessor.kernel_name="$KERNEL" \
+         --ExecutePreprocessor.timeout=7200 "$nb" >/dev/null 2>"/tmp/${nb%.ipynb}.err"; then
+      # keep the committed kernel name standard ("ir"), whatever kernel ran it locally
+      python -c "import json,sys; f=sys.argv[1]; d=json.load(open(f)); d['metadata']['kernelspec']={'display_name':'R','language':'R','name':'ir'}; json.dump(d,open(f,'w'),indent=1)" "$nb"
+      echo "OK  ($((SECONDS - start)) s)"
+    else
+      echo "FAILED"; tail -20 "/tmp/${nb%.ipynb}.err"; exit 1
+    fi
+  done
 done
-echo "all steps completed"
+echo "done"
