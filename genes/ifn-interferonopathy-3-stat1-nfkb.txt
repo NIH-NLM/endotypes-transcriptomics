@@ -1,8 +1,0 @@
-# 3-gene "STAT1/NF-kB" subscore of the 28-gene IRG-S.
-# Source: de Jesus AA, Hou Y, Brooks S, ... Canna SW, Goldbach-Mansky R. Distinct interferon
-# signatures and cytokine patterns define additional systemic autoinflammatory diseases.
-# J Clin Invest. 2020;130(4):1669-1682. doi:10.1172/JCI129301. Supplemental material,
-# Supplemental Figure 3B (page 13) and Methods (pages 8-9): genes with both STAT1 and NF-kB1/2 binding sites.
-CXCL10
-GBP1
-SOCS1

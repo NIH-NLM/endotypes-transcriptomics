@@ -62,8 +62,8 @@ All numbers are from the rendered notebooks; the notebook that produces each is 
 - **No patient groups.** The gap statistic gives k = 1 in all three studies. pvclust supports only
   small clusters of patients, on the axis where AU is anti-conservative. Dynamic Tree Cut always returns
   groups, so its patient groups are not evidence of types.
-- **The interferon genes stay together** in every study and every method. The 28-gene interferon
-  response gene score (de Jesus AA et al. *J Clin Invest* 2020;130:1669–1682, Supplemental Figure 3B)
+- **The interferon genes stay together** in every study and every method. The 28 interferon response
+  genes (Kim H et al. *J Interferon Cytokine Res* 2018;38:171–185; de Jesus AA et al. *J Clin Invest* 2020;130:1669–1682)
   falls in one module in the array and in the scRNA_seq pseudobulk; the 11 NF-κB-only genes, the
   control, do not.
 - **Projection.** The array modules scored in the array's own samples reproduce the WGCNA eigengenes
@@ -147,7 +147,7 @@ only for k-means, taken from the gap statistic. Notebooks marked (Python) run pv
 | `04_…_soft_threshold` | WGCNA power, first visit per child |
 | `05_…_modules` | WGCNA modules and hub genes |
 | `05b_…_projection` | every sample scored on the first-visit modules; round-trip gate |
-| `05c_…_interferon_genes` | the 28 interferon response genes and 11 NF-κB control genes against the modules |
+| `05c_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules |
 | `06_…_module_traits` | module scores vs clinical traits; claims B2, B4, B6 |
 | `06a_…_gap_statistic` | k-means k for patients and genes |
 | `06b_…_modules_across_visits` | mixed model over all visits; claim B3 |
@@ -172,7 +172,7 @@ only for k-means, taken from the gap statistic. Notebooks marked (Python) run pv
 | `12_…_normalise` | filter, PFlog1pPF |
 | `13_…_soft_threshold` | WGCNA power (exploratory, n = 16) |
 | `14_…_modules` | WGCNA modules (exploratory) |
-| `14b_…_interferon_genes` | the 28 interferon response genes and 11 NF-κB control genes against the modules |
+| `14b_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules |
 | `15_…_array_module_preservation` | are the GSE65391 modules present here? |
 | `15b_…_array_module_projection` | samples scored on the GSE65391 modules |
 | `16_…_module_traits` | module scores vs nephritis activity; claims C3, C4 |
@@ -194,7 +194,7 @@ only for k-means, taken from the gap statistic. Notebooks marked (Python) run pv
 | `23_…_normalise` | filter, PFlog1pPF |
 | `24_…_soft_threshold` | WGCNA power, children with SLE |
 | `25_…_modules` | WGCNA modules |
-| `25b_…_interferon_genes` | the 28 interferon response genes and 11 NF-κB control genes against the modules |
+| `25b_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules |
 | `26_…_array_module_preservation` | are the GSE65391 modules present here? claim N4 |
 | `26b_…_array_module_projection` | children scored on the GSE65391 modules |
 | `27_…_module_traits` | module scores vs clinical traits; SLE vs healthy; claims N1–N4 |
@@ -216,8 +216,8 @@ only for k-means, taken from the gap statistic. Notebooks marked (Python) run pv
 ipynb/      notebooks
 src/        paths.R: locations only
 run_all.sh  executes the notebooks in order
-genes/      curated gene lists: six-gene interferon score; 28-gene interferon response gene score and
-            its 25- and 3-gene parts, and 11 NF-κB control genes (de Jesus et al. 2020, supplement)
+genes/      curated gene lists: six-gene interferon score; the 28 interferon response genes (Kim et al.
+            2018, de Jesus et al. 2020) and their 25- and 3-gene subsets; 11 NF-kB-only control genes
 data/       downloads and run artifacts; not committed, rebuilt by the notebooks
 figures/    a 300 dpi PNG of every figure, by study; not committed, rebuilt by the notebooks
 ```
