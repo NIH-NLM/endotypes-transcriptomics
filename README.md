@@ -73,9 +73,10 @@ All numbers are from the rendered notebooks; the notebook that produces each is 
   - Banchereau et al. 2016: B3 reproduced (plasma-cell module has the strongest within-child association
     with SLEDAI, t = 8.7; 06b); B5 reproduced (red-cell module higher, NK module lower in SLE; 06c);
     B2 consistent (interferon R² = 0.20 with SLEDAI; 06); B1 approximate (65.6% against 84.8%; 06c);
-    B4 same direction, not significant; B6 not testable with one visit per child.
-  - Chen et al. 2024: C2 partly reproduced (23 of 27 genes in the paper's direction, Spearman ρ = 0.56
-    to 0.61; the five largest effects not reproduced; none significant; 16b); C3 direction only; C4 not
+    B4 same direction, not significant; B6 not reproduced: the paper's seven patient groups are not recovered with its own 797 transcripts, and the gap statistic finds no groups (06d–06g).
+  - Chen et al. 2024: C2 not reproduced (23 of 27 genes in the paper's direction, Spearman ρ = 0.56
+    to 0.61, none significant; 16b). The five largest effects rest on one or two inactive samples, one of
+    them missing from NCBI's counts, and sequencing batch is confounded with activity (16c); C3 direction only; C4 not
     the same measure (16).
   - Nehar-Belaid et al. 2020: N1 consistent (interferon module higher in SLE, q = 0.001); N2 partly;
     N3 consistent in direction (27).
@@ -97,6 +98,10 @@ Rscript -e 'IRkernel::installspec()'
 4. Download the GSE135779 supplement by hand (the publisher's site does not allow scripted downloads):
    open https://www.nature.com/articles/s41590-020-0743-0, download Supplementary Tables 1–4
    (`41590_2020_743_MOESM3_ESM.xlsx`) and save it in `data/GSE135779/`.
+   For notebooks 06d–06g, download the Banchereau et al. supplement from
+   https://pmc.ncbi.nlm.nih.gov/articles/PMC5426482/ (Supplementary Materials: `NIHMS775280-supplement-08.pdf`
+   to `-12.xlsx`) and save the files in `data/GSE65391/`. PMC shows a check page first; a file of about
+   6 KB is that page, not the supplement.
 5. Open the notebooks in `ipynb/` under the **R** kernel and run them in order, or run them all from
    the terminal:
 
@@ -147,6 +152,10 @@ only for k-means, taken from the gap statistic. Notebooks marked (Python) run pv
 | `06a_…_gap_statistic` | k-means k for patients and genes |
 | `06b_…_modules_across_visits` | mixed model over all visits; claim B3 |
 | `06c_…_sle_vs_healthy` | module scores, SLE vs healthy; claims B1, B5 |
+| `06d_…_PG_profiles` | preprocessing for claim B6: children with 5+ visits; SLEDAI correlation with the paper's 797 transcripts (Table S5) and with our 16 modules |
+| `06e_…_PG_paper_method` | the seven patient groups rebuilt with the paper's method, against Table S2 |
+| `06f_…_PG_ward_kmeans` | the same profiles with Ward trees (uncut) and the gap statistic for k-means |
+| `06g_…_PG_pvclust` (Python) | pvclust on the children's profiles; summary of claim B6 |
 | `07_…_heatmap_hclust` | Ward trees on patients and genes, first visits |
 | `07b_…_heatmap_all_visits_ordered` | every visit, children ordered by mean SLEDAI and by Ward tree |
 | `07c_…_heatmap_all_visits_clustered` | every visit, Ward tree |
@@ -169,6 +178,7 @@ only for k-means, taken from the gap statistic. Notebooks marked (Python) run pv
 | `16_…_module_traits` | module scores vs nephritis activity; claims C3, C4 |
 | `16a_…_gap_statistic` | k-means k for samples and genes |
 | `16b_…_published_genes` | the paper's named genes, DESeq2 and limma-voom; claim C2 |
+| `16c_…_why_not_reproduced` | why claim C2 does not reproduce: samples, the authors' GEO file, sequencing batch, single-sample effects |
 | `17_…_heatmap_hclust` | Ward trees on samples and genes |
 | `18_…_heatmap_kmeans` | k-means with gap-statistic k |
 | `18b_…_dynamic_tree_cut` | Dynamic Tree Cut on the Ward trees |
