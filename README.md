@@ -24,7 +24,10 @@ These are three different platforms. The RNA_array is the largest; it is an open
 leverage these in a federated manner. All data in this analysis are public.
 
 Each study is prepared on its own:
-- array: deposited log2 intensities; brightest probe per gene;
+- array: non-normalized intensities from GEO, normalized with neqc (Shi et al. 2010); probes rated Perfect or
+  Good (Barbosa-Morais et al. 2010); batch corrected by replicate bridging with the 23 technical replicate
+  pairs; one probe per gene by collapseRows MaxMean (Miller et al. 2011); expressed = detected (p < 0.05) in at
+  least 10% of arrays;
 - RNA sequencing counts (bulk, and pseudobulk summed per child): genes with fewer than 10 counts in
   more than 90% of samples removed (WGCNA FAQ), then PFlog1pPF normalisation (Booeshaghi AS et al.,
   bioRxiv 2022, doi:10.1101/2022.05.06.490859).
@@ -49,37 +52,48 @@ All numbers are from the rendered notebooks; the notebook that produces each is 
 | | GSE65391 · RNA_array | GSE232381 · bulk_RNA_seq | GSE135779 · scRNA_seq (pseudobulk) |
 |---|---|---|---|
 | samples used for modules | 157 first visits | 16 | 33 children with SLE |
-| WGCNA modules (05, 14, 25) | 16 | 34 (exploratory, n = 16) | 29 |
-| interferon module | pink | paleturquoise | royalblue |
-| 28 interferon response genes in that module (05c, 14b, 25b) | 26 of 28 | 14 of 28; all 28 kME ≥ 0.66 | 27 of 28 |
-| 11 NF-κB control genes in that module | 0 of 11 | 0 of 11 | 1 of 11 (GZMB) |
+| genes in the network (03b, 12, 23) | 13,259 expressed | 16,605 | 15,353 |
+| WGCNA power (04, 13, 24) | 6 | 16 | 18 |
+| WGCNA modules (05, 14, 25) | 14 | 39 (exploratory, n = 16) | 30 |
+| interferon module | black | darkred | magenta |
+| 28 interferon response genes in that module (05c, 15c, 26c) | 23 of 24 measured | 22 of 28; all 28 kME >= 0.53 | 27 of 28 |
+| 11 NF-kB control genes in that module | 0 of 11 | 0 of 11 | 0 of 11 |
 | gap statistic, patients (06a, 16a, 27a) | k = 1 | k = 1 | k = 1 |
-| gap statistic, hub genes | k = 15 | k = 2 (no clear k) | k = 10 |
-| pvclust, interferon hub genes (08c, 18c, 29c) | one cluster, AU 1.000, BP 1.000 | with tan, AU 0.998, BP 0.102 | with midnightblue and greenyellow, AU 0.968, BP 0.033 |
-| pvclust, patients with AU ≥ 0.95 (08d, 18d, 29d) | 14 clusters of 2–5 | 14 and 2 samples | 11 children, and five pairs |
-| Dynamic Tree Cut, genes against modules (08b, 18b, 29b) | ARI 1.000 | ARI 0.776 | ARI 0.484 |
+| gap statistic, hub genes | k = 14 | k = 13 (no plateau) | k = 4 (no plateau) |
+| pvclust, interferon hub genes (08c, 18c, 29c) | one cluster, AU 1.000, BP 1.000 | one cluster, AU 0.996, BP 0.759 | with 9 plasma-cell genes, AU 0.985, BP 0.026 |
+| pvclust, patients with AU >= 0.95 (08d, 18d, 29d) | 16 clusters of 2 to 9 | 14 and 2 samples | two pairs |
+| Dynamic Tree Cut, genes against modules (08b, 18b, 29b) | ARI 1.000 | ARI 0.574 | ARI 0.263 |
 
-- **No patient groups.** The gap statistic gives k = 1 in all three studies. pvclust supports only
-  small clusters of patients, on the axis where AU is anti-conservative. Dynamic Tree Cut always returns
-  groups, so its patient groups are not evidence of types.
-- **The interferon genes stay together** in every study and every method. The 28 interferon response
-  genes (Kim H et al. *J Interferon Cytokine Res* 2018;38:171–185; de Jesus AA et al. *J Clin Invest* 2020;130:1669–1682)
-  falls in one module in the array and in the scRNA_seq pseudobulk; the 11 NF-κB-only genes, the
-  control, do not.
-- **Projection.** The array modules scored in the array's own samples reproduce the WGCNA eigengenes
-  (r = 1, largest difference 3 × 10⁻¹⁵; 05b). Projected into the other studies, they agree with a local
-  refit for 12 of 16 modules (bulk_RNA_seq, r ≥ 0.976; 15b) and 13 of 16 (scRNA_seq, r ≥ 0.945; 26b).
+- **Array preprocessing.** Non-normalized intensities from GEO, neqc normalization (Shi W et al. *Nucleic
+  Acids Res* 2010;38:e204), probes rated Perfect or Good (Barbosa-Morais NL et al. *Nucleic Acids Res*
+  2010;38:e17), replicate bridging with the 23 technical replicate pairs (03), and one probe per gene by
+  collapseRows MaxMean (Miller JA et al. *BMC Bioinformatics* 2011;12:322). On held-out replicate pairs,
+  2 probes still differ between batches after bridging, against 3 expected by chance (03).
+- **WGCNA power.** In all three studies, the lowest power whose scale-free fit R squared is at least 0.90 and
+  has changed by less than 0.01 from the previous power (the WGCNA tutorial's "curve flattens out" rule).
+  At power 6 the array's lymphoid, B-cell and NK genes share one module (turquoise).
+- **No patient groups.** The gap statistic gives k = 1 in all three studies. pvclust supports only small
+  clusters of patients, on the axis where AU is anti-conservative. Dynamic Tree Cut always returns groups,
+  so its patient groups are not evidence of types.
+- **The interferon genes stay together** in every study and every method. The 28 interferon response genes
+  (Kim H et al. *J Interferon Cytokine Res* 2018;38:171-185; de Jesus AA et al. *J Clin Invest*
+  2020;130:1669-1682) fall mostly in one module in each study; the 11 NF-kB-only genes, the control, do not.
+  On the array, HERC5, HERC6, IFIT5 and OAS3 have only probes rated Bad and are not measured.
+- **Projection.** The array modules scored in the array's own samples reproduce the WGCNA eigengenes (r = 1,
+  largest difference 3e-15; 05b). Projected into the other studies, they agree with a local refit for 12 of
+  14 modules (bulk_RNA_seq, r >= 0.965; 15b) and 10 of 14 (scRNA_seq, r >= 0.88; 26b).
 - **Comparison with the original papers.**
-  - Banchereau et al. 2016: B3 reproduced (plasma-cell module has the strongest within-child association
-    with SLEDAI, t = 8.7; 06b); B5 reproduced (red-cell module higher, NK module lower in SLE; 06c);
-    B2 consistent (interferon R² = 0.20 with SLEDAI; 06); B1 approximate (65.6% against 84.8%; 06c);
-    B4 same direction, not significant; B6 not reproduced: the paper's seven patient groups are not recovered with its own 797 transcripts, and the gap statistic finds no groups (06d–06g).
-  - Chen et al. 2024: C2 not reproduced (23 of 27 genes in the paper's direction, Spearman ρ = 0.56
-    to 0.61, none significant; 16b). The five largest effects rest on one or two inactive samples, one of
-    them missing from NCBI's counts, and sequencing batch is confounded with activity (16c); C3 direction only; C4 not
-    the same measure (16).
-  - Nehar-Belaid et al. 2020: N1 consistent (interferon module higher in SLE, q = 0.001); N2 partly;
-    N3 consistent in direction (27).
+  - Banchereau et al. 2016: B3 reproduced (the plasma-cell module has the strongest within-child
+    association with SLEDAI, t = 10.2; 06b); B5 partly (red-cell module higher in SLE; no separate NK module
+    at this power; 06c); B2 consistent (interferon R2 = 0.22 with SLEDAI; 06); B1 approximate (70.7% against
+    84.8%; 06c); B4 same direction, not significant; B6 not reproduced: the paper's seven patient groups are
+    not recovered with its own 797 transcripts, and the gap statistic finds no groups (06d to 06g).
+  - Chen et al. 2024: C2 not reproduced (23 of 27 genes in the paper's direction, Spearman rho = 0.56 to
+    0.61, none significant; 16b). The five largest effects rest on one or two inactive samples, one of them
+    missing from NCBI's counts, and sequencing batch is confounded with activity (16c). C3 direction only;
+    C4 not the same measure (16).
+  - Nehar-Belaid et al. 2020: N1 consistent (interferon module higher in SLE, q = 0.0007); N2 same direction,
+    not significant; N3 consistent in direction for monocytes and lymphoid genes (27).
 
 ## Running on ADAPTS (Lifebit)
 
@@ -142,9 +156,10 @@ only for k-means, taken from the gap statistic. Notebooks marked (Python) run pv
 |---|---|
 | `00_…_download` | series matrix, platform annotation, NCBI gene_info |
 | `01_…_metadata` | clinical fields; SLEDAI stage per visit; first visit per child |
-| `02_…_probes_to_genes` | probes to genes; expressed genes |
-| `03_…_batch_check` | technical replicates across the two array batches |
-| `04_…_soft_threshold` | WGCNA power, first visit per child |
+| `02_…_normalise` | non-normalized intensities; neqc normalization; probe quality; detection |
+| `03_…_batch_correction` | replicate bridging with the 23 technical replicate pairs; split-half check |
+| `03b_…_probes_to_genes` | one probe per gene (collapseRows MaxMean); expressed genes |
+| `04_…_soft_threshold` | WGCNA power (tutorial rule), first visit per child |
 | `05_…_modules` | WGCNA modules and hub genes |
 | `05b_…_projection` | every sample scored on the first-visit modules; round-trip gate |
 | `05c_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules |
@@ -172,9 +187,9 @@ only for k-means, taken from the gap statistic. Notebooks marked (Python) run pv
 | `12_…_normalise` | filter, PFlog1pPF |
 | `13_…_soft_threshold` | WGCNA power (exploratory, n = 16) |
 | `14_…_modules` | WGCNA modules (exploratory) |
-| `14b_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules |
 | `15_…_array_module_preservation` | are the GSE65391 modules present here? |
 | `15b_…_array_module_projection` | samples scored on the GSE65391 modules |
+| `15c_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules |
 | `16_…_module_traits` | module scores vs nephritis activity; claims C3, C4 |
 | `16a_…_gap_statistic` | k-means k for samples and genes |
 | `16b_…_published_genes` | the paper's named genes, DESeq2 and limma-voom; claim C2 |
@@ -194,9 +209,9 @@ only for k-means, taken from the gap statistic. Notebooks marked (Python) run pv
 | `23_…_normalise` | filter, PFlog1pPF |
 | `24_…_soft_threshold` | WGCNA power, children with SLE |
 | `25_…_modules` | WGCNA modules |
-| `25b_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules |
 | `26_…_array_module_preservation` | are the GSE65391 modules present here? claim N4 |
 | `26b_…_array_module_projection` | children scored on the GSE65391 modules |
+| `26c_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules |
 | `27_…_module_traits` | module scores vs clinical traits; SLE vs healthy; claims N1–N4 |
 | `27a_…_gap_statistic` | k-means k for children and genes |
 | `28_…_heatmap_hclust` | Ward trees on children and genes |
