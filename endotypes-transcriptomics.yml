@@ -32,7 +32,8 @@ dependencies:
   - r-data.table
   - r-curl
 
-  - bioconductor-limma                    # removeBatchEffect, duplicateCorrelation
+  - bioconductor-limma                    # neqc normalization of the Illumina arrays; limma-voom
+  - bioconductor-illuminahumanv4.db       # probe quality of the Illumina HumanHT-12 v4 array
 
   # differential expression (later)
   - bioconductor-edger
