@@ -1,17 +1,15 @@
 # ── what is committed, and what is not ────────────────────────────────────
 #
-#   cohorts/    COMMITTED. The frozen site assignment and discovery/validation
-#               split. Redrawing them moves every downstream number.
+#   ipynb/      COMMITTED. The notebooks, rendered, and nothing else.
+#   src/        COMMITTED. paths.R: locations only.
 #   genes/      COMMITTED. Curated gene sets.
-#   figures/    COMMITTED. Rendered heatmaps, kept for sharing.
-#   ipynb/      COMMITTED, and holds notebooks and nothing else.
-#   src/        COMMITTED. R that is not a notebook.
-#   reference/  COMMITTED. The earlier Nextflow scaffold, kept as the logic source.
+#   run_all.sh, README.md, endotypes-transcriptomics.yml   COMMITTED.
 #
-#   data/       NOT committed. The GEO download, and data/run_artifacts/,
-#               which holds everything a run can regenerate.
+#   data/       NOT committed. Downloads, and data/run_artifacts/, which a run regenerates.
+#   figures/    NOT committed. A PNG of every figure; a run regenerates them.
 
 data/
+figures/
 endotypes-transcriptomics.tar.gz
 
 # ipynb/ holds notebooks. Anything else that lands there is a stray.

@@ -1,0 +1,17 @@
+# 11-gene "NF-kB-only validation score": NF-kB1/2 targets with no STAT1, STAT2 or TYK1 binding site.
+# Not interferon response genes; the authors use them as a control for the 3-gene subscore.
+# Source: de Jesus AA, Hou Y, Brooks S, ... Canna SW, Goldbach-Mansky R. Distinct interferon
+# signatures and cytokine patterns define additional systemic autoinflammatory diseases.
+# J Clin Invest. 2020;130(4):1669-1682. doi:10.1172/JCI129301. Supplemental material,
+# Methods, Step 2 (page 9) and Supplemental Figure 5 (page 16). NF-kB1 targets: 9; NF-kB2 targets: SELL, XIAP.
+AICDA
+CCND2
+EBI3
+GZMB
+IFNG
+MSR1
+SELP
+TANK
+TLR2
+SELL
+XIAP
