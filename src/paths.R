@@ -3,6 +3,7 @@
 #   data/<GSE>/                one folder per GEO study (downloads)
 #   data/ncbi/                 NCBI gene_info
 #   data/run_artifacts/<GSE>/  everything a notebook writes; regenerable
+#   figures/<GSE>/             a PNG of every figure, also shown inline; regenerable
 #   genes/                     curated gene lists
 #
 # The root is found by walking up to the environment file, so this works from
@@ -32,6 +33,12 @@ raw <- function(gse, file = "") {
 art <- function(gse, file = "") {
   d <- file.path(DATA, "run_artifacts", gse); dir.create(d, showWarnings = FALSE, recursive = TRUE)
   if (nzchar(file)) file.path(d, file) else d
+}
+
+# fig("GSE65391", "07_heatmap_hclust.png")  ->  figures/GSE65391/07_heatmap_hclust.png
+fig <- function(gse, file) {
+  d <- file.path(ROOT, "figures", gse); dir.create(d, showWarnings = FALSE, recursive = TRUE)
+  file.path(d, file)
 }
 
 # genes/<name>: one gene symbol per line; lines starting with # are notes

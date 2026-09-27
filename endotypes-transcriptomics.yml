@@ -44,12 +44,23 @@ dependencies:
   - r-fastcluster
   - bioconductor-impute
   - bioconductor-preprocesscore
+  - r-hmisc
+  - r-matrixstats
+  - r-foreach
+  - r-doparallel
+  - bioconductor-go.db
+  - bioconductor-annotationdbi
+  # WGCNA from CRAN contains C code; conda's R calls conda's compilers by name
+  - compilers
 
   # GSE135779 supplementary table (xlsx)
   - r-readxl
 
   # federation: random-effects meta-analysis
   - r-metafor
+
+  # mixed models for repeated visits
+  - r-nlme
 
   # clustering and figures
   - r-cluster
@@ -59,3 +70,10 @@ dependencies:
 
   # single-cell count matrices (Matrix Market files) for pseudobulk
   - r-matrix
+
+  # ── Python notebooks: pvclust-py (AU p-values by multiscale bootstrap) ──
+  # pinned to a GitHub commit so every build gets the same code
+  - python>=3.11
+  - pip
+  - pip:
+      - "pvclust-py @ git+https://github.com/NIH-NLM/pvclust-py.git@6b0c3bf8aea04f67e8e1ce4ac7bf2e46d0d13224"

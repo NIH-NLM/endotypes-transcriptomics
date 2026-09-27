@@ -1,9 +1,9 @@
-# 28-gene interferon response gene score (IRG-S).
+# 25-gene "STAT1-only" subscore of the 28-gene IRG-S.
 # Source: de Jesus AA, Hou Y, Brooks S, ... Canna SW, Goldbach-Mansky R. Distinct interferon
 # signatures and cytokine patterns define additional systemic autoinflammatory diseases.
 # J Clin Invest. 2020;130(4):1669-1682. doi:10.1172/JCI129301. Supplemental material,
-# Supplemental Figure 3B (page 13), all 28 rows of the table, in table order.
-# One HGNC gene symbol per line. Lines starting with # are notes.
+# Supplemental Figure 3B (page 13): rows marked "Used to generate 25-gene STAT1-only score".
+# The table marks OAS3 NF-kB "Y?" and SIGLEC1 STAT1 "N?"; the authors keep both in this subscore.
 DDX60
 EPSTI1
 HERC5
@@ -29,6 +29,3 @@ RTP4
 SIGLEC1
 SPATS2L
 USP18
-CXCL10
-GBP1
-SOCS1
