@@ -1,12 +1,15 @@
-# Where things live. Sourced by every notebook. Locations only; no analysis.
+# Paths.R
+#   Sets the locations for all the files:
 #
-#   data/<GSE>/                one folder per GEO study (downloads)
-#   data/ncbi/                 NCBI gene_info
-#   data/run_artifacts/<GSE>/  everything a notebook writes; regenerable
-#   figures/<GSE>/             a PNG of every figure, also shown inline; regenerable
+#   data/<GSE>/                one folder per GEO study
+#   data/ncbi/                 NCBI gene_info 
+#   data/run_artifacts/<GSE>/  the output of all noteboos, organized by GEO study, reenerable
+#   figures/<GSE>/             figures are both inline and saved, regenerable
 #   genes/                     curated gene lists
 #
-# The root is found by walking up to the environment file, so this works from
+# `..` refers to the parent to a current directory
+# `.`  refers to the current directory
+#  
 # ipynb/ or from the repository root.
 
 .find_root <- function(start = getwd()) {
