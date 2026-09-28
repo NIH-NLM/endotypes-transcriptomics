@@ -13,7 +13,7 @@ Each study is one site.
 | study | data type | tissue | patients | reference |
 |---|---|---|---|---|
 | **GSE65391** | `RNA_array`: Illumina HumanHT-12 microarray | whole blood | 158 children with SLE, 924 visits; 46 healthy children | Banchereau R et al. *Cell* 2016;165:551–565 |
-| **GSE232381** | `bulk_RNA_seq`: NovaSeq | peripheral blood cells | 16 with lupus nephritis (10 active, 6 inactive); no age in GEO | Chen YC et al. *Heliyon* 2024;10:e32303 |
+| **GSE232381** | `bulk_RNA_seq`: NovaSeq | peripheral blood cells | 25 with lupus nephritis (12 active, 13 inactive); no age in GEO | Chen YC et al. *Heliyon* 2024;10:e32303 |
 | **GSE135779** | `scRNA_seq`, used as pseudobulk | PBMC | 33 children with SLE, 11 healthy children | Nehar-Belaid D et al. *Nat Immunol* 2020;21:1094–1106 |
 
 Clinical data for GSE135779 come from the paper's Supplementary Table 1b; GEO holds only age and group.
@@ -28,11 +28,13 @@ Each study is prepared on its own:
   Good (Barbosa-Morais et al. 2010); batch corrected by replicate bridging with the 23 technical replicate
   pairs; one probe per gene by collapseRows MaxMean (Miller et al. 2011); expressed = detected (p < 0.05) in at
   least 10% of arrays;
-- RNA sequencing counts (bulk, and pseudobulk summed per child): genes with fewer than 10 counts in
+- RNA sequencing counts (bulk: the authors' expected counts from their GEO file; pseudobulk: summed per
+  child): genes with fewer than 10 counts in
   more than 90% of samples removed (WGCNA FAQ), then PFlog1pPF normalisation (Booeshaghi AS et al.,
   bioRxiv 2022, doi:10.1101/2022.05.06.490859).
 
-Genes are named with current NCBI symbols, reached through Entrez identifiers, in every study.
+Genes are named with current NCBI symbols in every study: through Entrez identifiers for the array and
+the pseudobulk, and through NCBI synonyms for the authors' bulk file (12).
 
 Per study:
 1. **WGCNA** gene modules (Langfelder and Horvath 2008), signed network.
@@ -51,51 +53,89 @@ All numbers are from the rendered notebooks; the notebook that produces each is 
 
 | | GSE65391 · RNA_array | GSE232381 · bulk_RNA_seq | GSE135779 · scRNA_seq (pseudobulk) |
 |---|---|---|---|
-| samples used for modules | 157 first visits | 16 | 33 children with SLE |
-| genes in the network (03b, 12, 23) | 13,259 expressed | 16,605 | 15,353 |
-| WGCNA power (04, 13, 24) | 6 | 16 | 18 |
-| WGCNA modules (05, 14, 25) | 14 | 39 (exploratory, n = 16) | 30 |
-| interferon module | black | darkred | magenta |
-| 28 interferon response genes in that module (05c, 15c, 26c) | 23 of 24 measured | 22 of 28; all 28 kME >= 0.53 | 27 of 28 |
+| samples used for modules | 157 first visits | 25 | 33 children with SLE |
+| genes in the network (03b, 12, 23) | 13,259 expressed | 13,578 | 15,353 |
+| WGCNA power (04, 13, 24) | 6 | 16 (FAQ value; no power reaches R squared 0.90) | 18 |
+| WGCNA modules (05, 14, 25) | 14 | 24 | 30 |
+| interferon module | black | lightgreen | magenta |
+| 28 interferon response genes in that module (05c, 15c, 26c) | 23 of 24 measured | 19 of 28; kME 0.30 to 0.96 | 27 of 28 |
 | 11 NF-kB control genes in that module | 0 of 11 | 0 of 11 | 0 of 11 |
-| k-means, patients: highest mean silhouette, K = 2 to 8 (08, 18, 29) | K = 2 (0.134) | K = 2 (0.404; 14 and 2 samples) | K = 5 (0.178) |
-| k-means, hub genes: highest mean silhouette | K = 14 (0.370) | K = 8 (0.332) | K = 4 (0.224) |
-| pvclust, interferon hub genes (08c, 18c, 29c) | one cluster, AU 1.000, BP 1.000 | one cluster, AU 0.996, BP 0.759 | with 9 plasma-cell genes, AU 0.985, BP 0.026 |
-| pvclust, patients with AU >= 0.95 (08d, 18d, 29d) | 16 clusters of 2 to 9 | 14 and 2 samples | two pairs |
-| Dynamic Tree Cut, genes against modules (08b, 18b, 29b) | ARI 1.000 | ARI 0.574 | ARI 0.263 |
+| k-means, patients: highest mean silhouette, K = 2 to 8 (08, 18, 29) | K = 2 (0.134) | K = 2 (0.585; 24 and 1 sample) | K = 5 (0.178) |
+| k-means, hub genes: highest mean silhouette | K = 14 (0.370) | K = 2 (0.302) | K = 4 (0.224) |
+| pvclust, interferon hub genes (08c, 18c, 29c) | one cluster, AU 1.000, BP 1.000 | two clusters: 6 genes (AU 0.979, BP 0.600) and 4 (AU 0.957, BP 0.354) | with 9 plasma-cell genes, AU 0.985, BP 0.026 |
+| pvclust, patients with AU >= 0.95 (08d, 18d, 29d) | 16 clusters of 2 to 9 | 24 samples (all but one) | two pairs |
+| Dynamic Tree Cut, genes against modules (08b, 18b, 29b) | ARI 1.000 | ARI 0.539 | ARI 0.263 |
 
 - **Array preprocessing.** Non-normalized intensities from GEO, neqc normalization (Shi W et al. *Nucleic
   Acids Res* 2010;38:e204), probes rated Perfect or Good (Barbosa-Morais NL et al. *Nucleic Acids Res*
   2010;38:e17), replicate bridging with the 23 technical replicate pairs (03), and one probe per gene by
   collapseRows MaxMean (Miller JA et al. *BMC Bioinformatics* 2011;12:322). On held-out replicate pairs,
   2 probes still differ between batches after bridging, against 3 expected by chance (03).
-- **WGCNA power.** In all three studies, the lowest power whose scale-free fit R squared is at least 0.90 and
-  has changed by less than 0.01 from the previous power (the WGCNA tutorial's "curve flattens out" rule).
+- **WGCNA power.** In GSE65391 and GSE135779, the lowest power whose scale-free fit R squared is at least 0.90
+  and has changed by less than 0.01 from the previous power (the WGCNA tutorial's "curve flattens out" rule).
+  In GSE232381 no power reaches 0.90, and the WGCNA FAQ value for a signed network with 20 to 30 samples, 16,
+  is used (13).
   At power 6 the array's lymphoid, B-cell and NK genes share one module (turquoise).
 - **Patient clusters.** The Ward trees cluster the patients in every study (07, 17, 28). pvclust supports
   clusters of patients with AU >= 0.95 (08d, 18d, 29d; on this axis AU is optimistic). k-means is shown for
-  every K from 2 to 8 with its mean silhouette (Rousseeuw 1987): the highest values are 0.134 (array), 0.404
+  every K from 2 to 8 with its mean silhouette (Rousseeuw 1987): the highest values are 0.134 (array), 0.585
   (bulk_RNA_seq) and 0.178 (scRNA_seq). On the array, the k-means clusters differ in disease activity; for
   example, at K = 4 one cluster of 19 children has median SLEDAI 19 (08).
-- **The interferon genes stay together** in every study and every method. The 28 interferon response genes
-  (Kim H et al. *J Interferon Cytokine Res* 2018;38:171-185; de Jesus AA et al. *J Clin Invest*
-  2020;130:1669-1682) fall mostly in one module in each study; the 11 NF-kB-only genes, the control, do not.
+- **Interferon genes.** The 28 interferon response genes (Kim H et al. *J Interferon Cytokine Res*
+  2018;38:171-185; de Jesus AA et al. *J Clin Invest* 2020;130:1669-1682) fall mostly in one module in each
+  study (23 of 24 measured, 19 of 28, 27 of 28); none of the 11 NF-kB-only genes, the control, does.
   On the array, HERC5, HERC6, IFIT5 and OAS3 have only probes rated Bad and are not measured.
 - **Projection.** The array modules scored in the array's own samples reproduce the WGCNA eigengenes (r = 1,
   largest difference 3e-15; 05b). Projected into the other studies, they agree with a local refit for 12 of
-  14 modules (bulk_RNA_seq, r >= 0.965; 15b) and 10 of 14 (scRNA_seq, r >= 0.88; 26b).
+  14 modules (bulk_RNA_seq, r >= 0.76; 15b) and 10 of 14 (scRNA_seq, r >= 0.88; 26b).
 - **Comparison with the original papers.**
   - Banchereau et al. 2016: B3 reproduced (the plasma-cell module has the strongest within-child
     association with SLEDAI, t = 10.2; 06b); B5 partly (red-cell module higher in SLE; no separate NK module
     at this power; 06c); B2 consistent (interferon R2 = 0.22 with SLEDAI; 06); B1 approximate (70.7% against
     84.8%; 06c); B4 same direction, not significant; B6 not reproduced: the paper's seven patient groups are
     not recovered with its own 797 transcripts, and k-means and pvclust do not recover seven groups of their sizes (06d to 06g).
-  - Chen et al. 2024: C2 not reproduced (23 of 27 genes in the paper's direction, Spearman rho = 0.56 to
-    0.61, none significant; 16b). The five largest effects rest on one or two inactive samples, one of them
-    missing from NCBI's counts, and sequencing batch is confounded with activity (16c). C3 direction only;
-    C4 not the same measure (16).
+  - Chen et al. 2024: partly reproduced; see below.
   - Nehar-Belaid et al. 2020: N1 consistent (interferon module higher in SLE, q = 0.0007); N2 same direction,
     not significant; N3 consistent in direction for monocytes and lymphoid genes (27).
+
+### Reproduction of Chen et al. 2024 (GSE232381)
+
+**Partly reproduced.** With the authors' own counts for all 25 GEO samples (12 active, 13 inactive), the
+directions of Table 3 reproduce; the sizes of the largest changes do not. The paper's exact comparison
+cannot be repeated, because GEO does not say which 18 of the 25 samples the paper compared.
+
+**C2, the Table 3 genes** (27 of 28 testable; notebooks 16b and 16c):
+
+| What was compared | Result |
+|---|---|
+| Direction, DESeq2 (the paper's method) | 23 of 27 genes have the paper's sign |
+| Direction, limma-voom | 22 of 24 tested genes have the paper's sign |
+| Size: Spearman correlation with Table 3 | rho = 0.68 (DESeq2) and 0.78 (limma-voom) |
+| The paper's five largest changes (NFKBIZ, HBEGF, CD83, IGLL1, ZC3H12A; log2 -2.51 to -4.30) | not found: DESeq2 gives -1.03 to +0.41 |
+| Adjusted p < 0.05 | 1 of 27 (NOTCH4) with DESeq2; none with limma-voom. Table 3 gives no p values. |
+| The authors' own fold change column against Table 3 | 26 of 27 in the same direction, rho = 0.94, values smaller than Table 3 |
+
+**What 16c found:**
+- For four of the five largest changes, one inactive sample (GSM7329703) holds 43 to 68% of the gene's total
+  TPM; for IGLL1 another inactive sample (GSM7329701) holds 68%.
+- For all five genes, the median active sample has more of the gene than the median inactive sample, the
+  opposite of the paper.
+- Sequencing flowcell is associated with activity (p = 0.007): one flowcell holds 6 active samples and no
+  inactive ones.
+
+**Other claims** (notebook 16):
+- C3 (NK and T-cell differences): not found; the closest module does not differ with activity (r = -0.01,
+  p = 0.96).
+- C4 (interferon-gamma higher in active LN): not the same measure; the type I interferon module does not
+  differ with activity (r = -0.25, p = 0.23).
+
+**Why an exact reproduction is not possible:**
+- The paper compared 9 active and 9 inactive patients; GEO has 25 samples and does not say which 18.
+  Supplement Table 5 gives group summaries only.
+- The paper names DESeq2 but gives no p values or thresholds for its 28 genes, which were chosen with IPA
+  after a cutoff whose value is not stated.
+- The paper chose these genes from its 18 samples, which are among these 25, so agreement in direction is
+  partly expected and is not independent confirmation.
 
 ## Running on ADAPTS (Lifebit)
 
@@ -205,17 +245,17 @@ only for k-means, which is shown for every K from 2 to 8 with its silhouette sco
 ### GSE232381 · bulk_RNA_seq
 | notebook | does |
 |---|---|
-| `10_…_download` | NCBI-generated raw counts (16 of 25 samples), series matrix |
-| `11_…_metadata` | active / inactive lupus nephritis; claims C0, C1 |
-| `12_…_normalise` | filter, PFlog1pPF |
-| `13_…_soft_threshold` | WGCNA power (exploratory, n = 16) |
-| `14_…_modules` | WGCNA modules (exploratory) |
+| `10_…_download` | the authors' Excel file (expected counts, TPM, FPKM for 25 samples), series matrix |
+| `11_…_metadata` | active / inactive lupus nephritis; the authors' columns matched to GSM identifiers; claims C0, C1 |
+| `12_…_normalise` | the authors' expected counts; current NCBI symbols; filter, PFlog1pPF |
+| `13_…_soft_threshold` | WGCNA power |
+| `14_…_modules` | WGCNA modules |
 | `15_…_array_module_preservation` | are the GSE65391 modules present here? |
 | `15b_…_array_module_projection` | samples scored on the GSE65391 modules |
 | `15c_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules; their heatmap with Ward trees |
 | `16_…_module_traits` | module scores vs nephritis activity; claims C3, C4 |
-| `16b_…_published_genes` | the paper's named genes, DESeq2 and limma-voom; claim C2 |
-| `16c_…_why_not_reproduced` | why claim C2 does not reproduce: samples, the authors' GEO file, sequencing batch, single-sample effects |
+| `16b_…_published_genes` | the paper's Table 3 genes in the authors' counts, DESeq2 and limma-voom; claim C2 |
+| `16c_…_why_not_reproduced` | why the Table 3 results do not reproduce: the authors' file against Table 3, sequencing batch, single samples |
 | `17_…_heatmap_hclust` | Ward trees on samples and genes |
 | `18_…_heatmap_kmeans` | k-means with silhouette scores; heatmaps for K = 2 to 8; clusters against nephritis activity |
 | `18b_…_dynamic_tree_cut` | Dynamic Tree Cut on the Ward trees |
