@@ -111,6 +111,27 @@ mamba activate endotypes-transcriptomics
 Rscript -e 'IRkernel::installspec()'
 ```
 
+   **If you already have a copy**, do not clone again and do not use `git pull`. In a terminal:
+
+```bash
+cd endotypes-transcriptomics
+git fetch origin && git reset --hard origin/main
+rm -rf data/run_artifacts figures
+mamba env remove -n endotypes-transcriptomics
+mamba env create -f endotypes-transcriptomics.yml
+mamba activate endotypes-transcriptomics
+Rscript -e 'IRkernel::installspec()'
+```
+
+   - `git fetch origin` downloads the latest version from GitHub without changing your files.
+   - `git reset --hard origin/main` makes your copy match GitHub exactly. Any edits you made to the
+     notebooks are discarded. `data/` and `figures/` are not tracked by git, so the files you downloaded
+     by hand stay in place.
+   - `rm -rf data/run_artifacts figures` removes the outputs of the previous run. The downloaded GEO
+     files and supplements in `data/` are kept, so they are not downloaded again.
+   - The environment is rebuilt because `endotypes-transcriptomics.yml` changes between versions.
+   - To keep your own edits, copy the notebooks elsewhere before `git reset --hard`.
+
 4. Download the GSE135779 supplement by hand (the publisher's site does not allow scripted downloads):
    open https://www.nature.com/articles/s41590-020-0743-0, download Supplementary Tables 1–4
    (`41590_2020_743_MOESM3_ESM.xlsx`) and save it in `data/GSE135779/`.
@@ -236,3 +257,9 @@ genes/      curated gene lists: six-gene interferon score; the 28 interferon res
 data/       downloads and run artifacts; not committed, rebuilt by the notebooks
 figures/    a 300 dpi PNG of every figure, by study; not committed, rebuilt by the notebooks
 ```
+
+## Use of AI tools
+
+Claude Code (Claude Opus 5.5, Anthropic) was used to write and run code, draft the explanations in the
+notebooks, and locate references. Anne Deslattes Mays designed the analysis, directed each step, and
+reviewed and revised all code, results and text. The author is responsible for the content.
