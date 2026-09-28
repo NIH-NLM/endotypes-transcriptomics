@@ -58,8 +58,8 @@ All numbers are from the rendered notebooks; the notebook that produces each is 
 | interferon module | black | darkred | magenta |
 | 28 interferon response genes in that module (05c, 15c, 26c) | 23 of 24 measured | 22 of 28; all 28 kME >= 0.53 | 27 of 28 |
 | 11 NF-kB control genes in that module | 0 of 11 | 0 of 11 | 0 of 11 |
-| gap statistic, patients (06a, 16a, 27a) | k = 1 | k = 1 | k = 1 |
-| gap statistic, hub genes | k = 14 | k = 13 (no plateau) | k = 4 (no plateau) |
+| k-means, patients: highest mean silhouette, K = 2 to 8 (08, 18, 29) | K = 2 (0.134) | K = 2 (0.404; 14 and 2 samples) | K = 5 (0.178) |
+| k-means, hub genes: highest mean silhouette | K = 14 (0.370) | K = 8 (0.332) | K = 4 (0.224) |
 | pvclust, interferon hub genes (08c, 18c, 29c) | one cluster, AU 1.000, BP 1.000 | one cluster, AU 0.996, BP 0.759 | with 9 plasma-cell genes, AU 0.985, BP 0.026 |
 | pvclust, patients with AU >= 0.95 (08d, 18d, 29d) | 16 clusters of 2 to 9 | 14 and 2 samples | two pairs |
 | Dynamic Tree Cut, genes against modules (08b, 18b, 29b) | ARI 1.000 | ARI 0.574 | ARI 0.263 |
@@ -72,9 +72,11 @@ All numbers are from the rendered notebooks; the notebook that produces each is 
 - **WGCNA power.** In all three studies, the lowest power whose scale-free fit R squared is at least 0.90 and
   has changed by less than 0.01 from the previous power (the WGCNA tutorial's "curve flattens out" rule).
   At power 6 the array's lymphoid, B-cell and NK genes share one module (turquoise).
-- **No patient groups.** The gap statistic gives k = 1 in all three studies. pvclust supports only small
-  clusters of patients, on the axis where AU is anti-conservative. Dynamic Tree Cut always returns groups,
-  so its patient groups are not evidence of types.
+- **Patient clusters.** The Ward trees cluster the patients in every study (07, 17, 28). pvclust supports
+  clusters of patients with AU >= 0.95 (08d, 18d, 29d; on this axis AU is optimistic). k-means is shown for
+  every K from 2 to 8 with its mean silhouette (Rousseeuw 1987): the highest values are 0.134 (array), 0.404
+  (bulk_RNA_seq) and 0.178 (scRNA_seq). On the array, the k-means clusters differ in disease activity; for
+  example, at K = 4 one cluster of 19 children has median SLEDAI 19 (08).
 - **The interferon genes stay together** in every study and every method. The 28 interferon response genes
   (Kim H et al. *J Interferon Cytokine Res* 2018;38:171-185; de Jesus AA et al. *J Clin Invest*
   2020;130:1669-1682) fall mostly in one module in each study; the 11 NF-kB-only genes, the control, do not.
@@ -87,7 +89,7 @@ All numbers are from the rendered notebooks; the notebook that produces each is 
     association with SLEDAI, t = 10.2; 06b); B5 partly (red-cell module higher in SLE; no separate NK module
     at this power; 06c); B2 consistent (interferon R2 = 0.22 with SLEDAI; 06); B1 approximate (70.7% against
     84.8%; 06c); B4 same direction, not significant; B6 not reproduced: the paper's seven patient groups are
-    not recovered with its own 797 transcripts, and the gap statistic finds no groups (06d to 06g).
+    not recovered with its own 797 transcripts, and k-means and pvclust do not recover seven groups of their sizes (06d to 06g).
   - Chen et al. 2024: C2 not reproduced (23 of 27 genes in the paper's direction, Spearman rho = 0.56 to
     0.61, none significant; 16b). The five largest effects rest on one or two inactive samples, one of them
     missing from NCBI's counts, and sequencing batch is confounded with activity (16c). C3 direction only;
@@ -149,7 +151,8 @@ KERNEL=ir-endotypes-transcriptomics ./run_all.sh
 One notebook per step per study. Every test states what is compared, on which samples, with which
 method, and what counts as a finding. Each study ends with its comparison against the published
 paper's claims. Ward's method (`ward.D2`, Minkowski p = 2) is always drawn as an uncut tree; k appears
-only for k-means, taken from the gap statistic. Notebooks marked (Python) run pvclust-py.
+only for k-means, which is shown for every K from 2 to 8 with its silhouette score. Notebooks marked
+(Python) run pvclust-py.
 
 ### GSE65391 · RNA_array
 | notebook | does |
@@ -162,19 +165,18 @@ only for k-means, taken from the gap statistic. Notebooks marked (Python) run pv
 | `04_…_soft_threshold` | WGCNA power (tutorial rule), first visit per child |
 | `05_…_modules` | WGCNA modules and hub genes |
 | `05b_…_projection` | every sample scored on the first-visit modules; round-trip gate |
-| `05c_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules |
+| `05c_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules; their heatmap with Ward trees |
 | `06_…_module_traits` | module scores vs clinical traits; claims B2, B4, B6 |
-| `06a_…_gap_statistic` | k-means k for patients and genes |
 | `06b_…_modules_across_visits` | mixed model over all visits; claim B3 |
 | `06c_…_sle_vs_healthy` | module scores, SLE vs healthy; claims B1, B5 |
-| `06d_…_PG_profiles` | preprocessing for claim B6: children with 5+ visits; SLEDAI correlation with the paper's 797 transcripts (Table S5) and with our 16 modules |
+| `06d_…_PG_profiles` | preprocessing for claim B6: children with 5+ visits; SLEDAI correlation with the paper's 797 transcripts (Table S5) and with our 14 modules |
 | `06e_…_PG_paper_method` | the seven patient groups rebuilt with the paper's method, against Table S2 |
-| `06f_…_PG_ward_kmeans` | the same profiles with Ward trees (uncut) and the gap statistic for k-means |
+| `06f_…_PG_ward_kmeans` | the same profiles with Ward trees and k-means with silhouette scores |
 | `06g_…_PG_pvclust` (Python) | pvclust on the children's profiles; summary of claim B6 |
 | `07_…_heatmap_hclust` | Ward trees on patients and genes, first visits |
 | `07b_…_heatmap_all_visits_ordered` | every visit, children ordered by mean SLEDAI and by Ward tree |
 | `07c_…_heatmap_all_visits_clustered` | every visit, Ward tree |
-| `08_…_heatmap_kmeans` | k-means with gap-statistic k |
+| `08_…_heatmap_kmeans` | k-means with silhouette scores; heatmaps for K = 2 to 8; clusters against clinical traits |
 | `08b_…_dynamic_tree_cut` | Dynamic Tree Cut on the Ward trees |
 | `08c_…_pvclust_genes` (Python) | AU p-values and BP, genes |
 | `08d_…_pvclust_patients` (Python) | AU p-values and BP, patients; two-way figure |
@@ -189,13 +191,12 @@ only for k-means, taken from the gap statistic. Notebooks marked (Python) run pv
 | `14_…_modules` | WGCNA modules (exploratory) |
 | `15_…_array_module_preservation` | are the GSE65391 modules present here? |
 | `15b_…_array_module_projection` | samples scored on the GSE65391 modules |
-| `15c_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules |
+| `15c_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules; their heatmap with Ward trees |
 | `16_…_module_traits` | module scores vs nephritis activity; claims C3, C4 |
-| `16a_…_gap_statistic` | k-means k for samples and genes |
 | `16b_…_published_genes` | the paper's named genes, DESeq2 and limma-voom; claim C2 |
 | `16c_…_why_not_reproduced` | why claim C2 does not reproduce: samples, the authors' GEO file, sequencing batch, single-sample effects |
 | `17_…_heatmap_hclust` | Ward trees on samples and genes |
-| `18_…_heatmap_kmeans` | k-means with gap-statistic k |
+| `18_…_heatmap_kmeans` | k-means with silhouette scores; heatmaps for K = 2 to 8; clusters against nephritis activity |
 | `18b_…_dynamic_tree_cut` | Dynamic Tree Cut on the Ward trees |
 | `18c_…_pvclust_genes` (Python) | AU p-values and BP, genes |
 | `18d_…_pvclust_samples` (Python) | AU p-values and BP, samples; two-way figure |
@@ -211,11 +212,10 @@ only for k-means, taken from the gap statistic. Notebooks marked (Python) run pv
 | `25_…_modules` | WGCNA modules |
 | `26_…_array_module_preservation` | are the GSE65391 modules present here? claim N4 |
 | `26b_…_array_module_projection` | children scored on the GSE65391 modules |
-| `26c_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules |
+| `26c_…_interferon_genes` | the 28 interferon response genes and 11 NF-kB-only control genes against the modules; their heatmap with Ward trees |
 | `27_…_module_traits` | module scores vs clinical traits; SLE vs healthy; claims N1–N4 |
-| `27a_…_gap_statistic` | k-means k for children and genes |
 | `28_…_heatmap_hclust` | Ward trees on children and genes |
-| `29_…_heatmap_kmeans` | k-means with gap-statistic k |
+| `29_…_heatmap_kmeans` | k-means with silhouette scores; heatmaps for K = 2 to 8; clusters against clinical traits |
 | `29b_…_dynamic_tree_cut` | Dynamic Tree Cut on the Ward trees |
 | `29c_…_pvclust_genes` (Python) | AU p-values and BP, genes |
 | `29d_…_pvclust_children` (Python) | AU p-values and BP, children; two-way figure |
