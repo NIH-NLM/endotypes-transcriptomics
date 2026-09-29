@@ -42,6 +42,9 @@ dependencies:
   # batch correction of RNA sequencing counts (ComBat-seq), internal CANDLE / SAVI data (notebook 40)
   - bioconductor-sva
 
+  # remove unwanted variation with control genes (RUVg), healthy-control lab correction (notebook 49)
+  - bioconductor-ruvseq
+
   # WGCNA dependencies. WGCNA itself has no osx-arm64 conda build, so the
   # WGCNA notebooks install it from CRAN in a visible first cell.
   - r-dynamictreecut

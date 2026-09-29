@@ -146,7 +146,7 @@ only as codes (`S001`, `P001`); initials, enrollment IDs and dates are never pri
 
 | notebook | does |
 |---|---|
-| `40_CANDLE_SAVI_bulk_RNA_seq_input_batch` | reads the four files; blood samples of AGS, CANDLE, SAVI, UAID (161); batch; ComBat-seq corrected counts for display |
+| `40_CANDLE_SAVI_bulk_RNA_seq_input_batch` | reads the four files; blood samples of AGS, CANDLE, SAVI, UAID; libraries of at least 1 million counts (160 samples; S127, 540 counts, removed); batch; ComBat-seq corrected counts for display |
 | `41_CANDLE_SAVI_bulk_RNA_seq_differential` | limma-voom, patient as block, batch in the design, raw counts; six pairs of AGS, CANDLE, SAVI, UAID; top genes: adjusted p < 0.05, fold change at least 2 |
 | `42_CANDLE_SAVI_bulk_RNA_seq_heatmaps` | heatmaps of the top genes (named; the 50 with the smallest adjusted p shown where a list is longer than 80) and of the 28 interferon response genes and 11 NF-kB-only controls, on the ComBat-seq counts; Ward trees on both axes |
 | `43_NIAMS_bulk_RNA_seq_PRE` | NIAMS PRE samples: SAVI against CANDLE, as in 41; heatmaps of the top genes and of the interferon genes |
@@ -155,6 +155,9 @@ only as codes (`S001`, `P001`); initials, enrollment IDs and dates are never pri
 | `46_autoimmune_vs_healthy` | AGS, CANDLE, SAVI, UAID and SLE (GSE232381) each, and the five together, against each healthy block; limma-voom, patient as block; interferon and facility checks; heatmaps |
 | `46b_autoimmune_patterns` | genes changed in all five diseases, in several, or in one only (UpSet-style table); disease samples clustered on their difference from healthy |
 | `47_NIAMS_PRE_vs_healthy` | NIAMS PRE samples (CANDLE, SAVI) against each healthy block, as in 46 |
+| `48_SLE_vs_healthy_same_lab` | SLE against healthy children within one lab (GSE65391 array, GSE135779 pseudobulk), gene by gene; 777 negative control genes (no difference in either lab) and 799 confirmed SLE genes |
+| `49_RUV_lab_correction` | RUVg with the negative control genes, k = 1 to 3, to remove the lab difference against healthy children; diagnostics and checks (interferon genes, NF-kB controls, hemoglobin, agreement with the same-lab SLE results) |
+| `49b_RUV_check_disease_comparisons` | the disease comparisons of notebook 41 with RUVg factors added, compared with notebook 41 |
 
 Run with `./run_all.sh CANDLE_SAVI`.
 
