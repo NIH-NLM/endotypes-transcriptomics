@@ -4,6 +4,7 @@
 #   ./run_all.sh                      all three studies, then federation
 #   ./run_all.sh GSE65391             one study (GSE65391, GSE232381 or GSE135779)
 #   ./run_all.sh federation           the federation notebooks only
+#   ./run_all.sh CANDLE_SAVI          the internal CANDLE / SAVI notebooks (40 on); needs the internal data
 #   KERNEL=ir-endotypes-transcriptomics ./run_all.sh
 #                                     use a named R kernel instead of "ir"
 #
@@ -24,8 +25,9 @@ case "${1:-all}" in
   GSE232381)  PATTERNS=("1[0-9]*_GSE232381_*") ;;
   GSE135779)  PATTERNS=("2[0-9]*_GSE135779_*") ;;
   federation) PATTERNS=("3[0-9]_federation_*") ;;
+  CANDLE_SAVI) PATTERNS=("4[0-9]_*") ;;             # internal data, not in the repository; not part of "all"
   all)        PATTERNS=("0[0-9]*_GSE65391_*" "1[0-9]*_GSE232381_*" "2[0-9]*_GSE135779_*" "3[0-9]_federation_*") ;;
-  *) echo "unknown target: $1 (use GSE65391, GSE232381, GSE135779, federation or all)"; exit 1 ;;
+  *) echo "unknown target: $1 (use GSE65391, GSE232381, GSE135779, federation, CANDLE_SAVI or all)"; exit 1 ;;
 esac
 
 # Each kernel must run the interpreter of the active conda environment. A kernel called "ir"
