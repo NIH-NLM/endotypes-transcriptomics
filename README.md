@@ -151,6 +151,10 @@ only as codes (`S001`, `P001`); initials, enrollment IDs and dates are never pri
 | `42_CANDLE_SAVI_bulk_RNA_seq_heatmaps` | heatmaps of the top genes (named; the 50 with the smallest adjusted p shown where a list is longer than 80) and of the 28 interferon response genes and 11 NF-kB-only controls, on the ComBat-seq counts; Ward trees on both axes |
 | `43_NIAMS_bulk_RNA_seq_PRE` | NIAMS PRE samples: SAVI against CANDLE, as in 41; heatmaps of the top genes and of the interferon genes |
 | `44_NIAMS_bulk_RNA_seq_POST` | NIAMS POST samples (all CANDLE): heatmaps of the PRE top genes and of the interferon genes |
+| `45_GSE69529_bulk_RNA_seq_healthy_controls` | healthy children from GEO GSE69529 (whole blood, the authors' counts): 43 children, one library each; healthy blocks under 2 and 2 or older |
+| `46_autoimmune_vs_healthy` | AGS, CANDLE, SAVI, UAID and SLE (GSE232381) each, and the five together, against each healthy block; limma-voom, patient as block; interferon and facility checks; heatmaps |
+| `46b_autoimmune_patterns` | genes changed in all five diseases, in several, or in one only (UpSet-style table); disease samples clustered on their difference from healthy |
+| `47_NIAMS_PRE_vs_healthy` | NIAMS PRE samples (CANDLE, SAVI) against each healthy block, as in 46 |
 
 Run with `./run_all.sh CANDLE_SAVI`.
 
