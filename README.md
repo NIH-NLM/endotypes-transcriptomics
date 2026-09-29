@@ -137,6 +137,23 @@ cannot be repeated, because GEO does not say which 18 of the 25 samples the pape
 - The paper chose these genes from its 18 samples, which are among these 25, so agreement in direction is
   partly expected and is not independent confirmation.
 
+## Internal CANDLE / SAVI RNA sequencing counts (notebooks 40 on)
+
+Internal bulk RNA sequencing gene counts from four sequencing facilities (BCM-HGSC, NCI-FNL, NIAID-NCI,
+NIAMS), placed by hand in `data/Goldbach-Mansky_compiled_RNA-Seq_GeneCounts_CANDLE_AND_SAVI_SUBSET_2026_09_22/`.
+The data are not in this repository; only the notebooks and their outputs are. Samples and patients appear
+only as codes (`S001`, `P001`); initials, enrollment IDs and dates are never printed.
+
+| notebook | does |
+|---|---|
+| `40_CANDLE_SAVI_bulk_RNA_seq_input_batch` | reads the four files; blood samples of AGS, CANDLE, SAVI, UAID (161); batch; ComBat-seq corrected counts for display |
+| `41_CANDLE_SAVI_bulk_RNA_seq_differential` | limma-voom, patient as block, batch in the design, raw counts; six pairs of AGS, CANDLE, SAVI, UAID; top genes: adjusted p < 0.05, fold change at least 2 |
+| `42_CANDLE_SAVI_bulk_RNA_seq_heatmaps` | heatmaps of the top genes (named; the 50 with the smallest adjusted p shown where a list is longer than 80) and of the 28 interferon response genes and 11 NF-kB-only controls, on the ComBat-seq counts; Ward trees on both axes |
+| `43_NIAMS_bulk_RNA_seq_PRE` | NIAMS PRE samples: SAVI against CANDLE, as in 41; heatmaps of the top genes and of the interferon genes |
+| `44_NIAMS_bulk_RNA_seq_POST` | NIAMS POST samples (all CANDLE): heatmaps of the PRE top genes and of the interferon genes |
+
+Run with `./run_all.sh CANDLE_SAVI`.
+
 ## Running on ADAPTS (Lifebit)
 
 1. Log in to lifebit.ai and authenticate with your PIV (Personal Identity Verification) card.

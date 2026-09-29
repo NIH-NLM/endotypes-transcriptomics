@@ -35,9 +35,12 @@ dependencies:
   - bioconductor-limma                    # neqc normalization of the Illumina arrays; limma-voom
   - bioconductor-illuminahumanv4.db       # probe quality of the Illumina HumanHT-12 v4 array
 
-  # differential expression (later)
+  # differential expression
   - bioconductor-edger
   - bioconductor-deseq2
+
+  # batch correction of RNA sequencing counts (ComBat-seq), internal CANDLE / SAVI data (notebook 40)
+  - bioconductor-sva
 
   # WGCNA dependencies. WGCNA itself has no osx-arm64 conda build, so the
   # WGCNA notebooks install it from CRAN in a visible first cell.
